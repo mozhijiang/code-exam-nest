@@ -15,7 +15,7 @@ class Storage {
   path: string;
   @Column()
   hash: string;
-  @Column({ type: 'date' })
+  @Column({ type: 'timestamptz' })
   time: Date;
 }
 const storageParam: BaseParam = {

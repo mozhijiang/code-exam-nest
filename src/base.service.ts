@@ -7,7 +7,8 @@ interface ListQuery {
     [key: string]: any
 }
 interface BaseParam {
-    primaryKey: string
+    primaryKey: string,
+    baseRelations?: string[]
 }
 declare class ServiceInteface<E, C, U>{
     save(entity: C | U): Promise<E>;
@@ -16,7 +17,7 @@ declare class ServiceInteface<E, C, U>{
     findOne(id: number, relations?: string[]): Promise<E>;
     update(id: number, update: U): Promise<E>;
     remove(id: number): Promise<E>;
-    all: () => Promise<E[]>
+    all: (relations: string[]) => Promise<E[]>
 };
 class BaseService<E, C, U> {
     public logger: Logger = new Logger('BaseService', { timestamp: true });
@@ -84,10 +85,13 @@ class BaseService<E, C, U> {
         if (!found) throw new HttpException('查询失败，没有有效的数据', 500);
         return found;
     }
-    async all() {
+    async all(relations?: []) {
         this.logger.log(`${this.constructor.name}.all`);
         return this.repository.find({
-            [this.param.primaryKey]: MoreThan(0)
+            where: {
+                [this.param.primaryKey]: MoreThan(0),
+            },
+            relations: relations || []
         });
     }
     /**

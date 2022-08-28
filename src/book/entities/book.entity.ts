@@ -1,5 +1,6 @@
 import { BaseParam } from "src/base.service";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Storage } from "src/storage/entities/storage.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('book')
 class Book {
@@ -7,9 +8,13 @@ class Book {
     bookId: number;
     @Column()
     name: string;
+    @ManyToOne(() => Storage, (storage) => storage.storageId)
+    @JoinColumn({ name: 'coverId' })
+    cover: Storage;
 }
 const bookParam: BaseParam = {
-    primaryKey: 'bookId'
+    primaryKey: 'bookId',
+    baseRelations: ['cover']
 }
 export {
     bookParam,
