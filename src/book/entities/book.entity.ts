@@ -1,6 +1,8 @@
 import { BaseParam } from "src/base.service";
+import { Question } from "src/question/entities/question.entity";
 import { Storage } from "src/storage/entities/storage.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Tag } from "src/tag/entities/tag.entity";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('book')
 class Book {
@@ -11,10 +13,15 @@ class Book {
     @ManyToOne(() => Storage, (storage) => storage.storageId)
     @JoinColumn({ name: 'coverId' })
     cover: Storage;
+    @ManyToMany(() => Tag, (tag) => tag.tagId)
+    @JoinTable({ name: 'books_tags', joinColumn: { name: 'bookId' }, inverseJoinColumn: { name: 'tagId' } })
+    tags: Tag[];
+    @OneToMany(() => Question, (question) => question.book)
+    questions: Question[];
 }
 const bookParam: BaseParam = {
     primaryKey: 'bookId',
-    baseRelations: ['cover']
+    baseRelations: ['cover', 'tags']
 }
 export {
     bookParam,
