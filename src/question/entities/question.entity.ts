@@ -1,7 +1,7 @@
 import { BaseParam } from "src/base.service";
 import { Book } from "src/book/entities/book.entity";
 import { Option } from "src/option/entities/option.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('question')
 class Question {
@@ -12,9 +12,11 @@ class Question {
   book: Book;
   @Column()
   ask: string;
-  @ManyToOne(() => Option, (option) => option.optionId)
-  @JoinColumn({ name: 'answerId' })
-  answer: Option;
+  @Column({ default: 'radio' })
+  type: 'ratio' | 'multiSelect';
+  @ManyToMany(() => Option, (option) => option.optionId)
+  @JoinTable({ name: 'questions_answers', joinColumn: { name: 'questionId' }, inverseJoinColumn: { name: 'optionId' } })
+  answer: Option[];
   @OneToMany(() => Option, (option) => option.question)
   options: Option[];
   @Column()

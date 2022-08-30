@@ -10,7 +10,9 @@ class Option {
   memo: string;
   @ManyToOne(() => Question, (question) => question.questionId)
   @JoinColumn({ name: 'questionId' })
-  question: Question
+  question: Question;
+  @Column()
+  sort: number;
 }
 const optionParam: BaseParam = {
   primaryKey: 'optionId'
