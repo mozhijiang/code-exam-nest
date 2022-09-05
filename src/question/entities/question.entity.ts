@@ -10,6 +10,8 @@ class Question {
   @ManyToOne(() => Book, (book) => book.bookId)
   @JoinColumn({ name: 'bookId' })
   book: Book;
+  @Column({ default: '' })
+  title: string;
   @Column()
   ask: string;
   @Column({ default: 'radio' })
@@ -23,9 +25,13 @@ class Question {
   level: number;
   @Column()
   sort: number;
+  @Column({ default: '' })
+  answerMemo: string;
+
 }
 const questionParam: BaseParam = {
-  primaryKey: 'questionId'
+  primaryKey: 'questionId',
+  baseRelations: ['book','options']
 }
 export {
   questionParam,
