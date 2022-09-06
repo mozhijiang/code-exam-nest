@@ -53,7 +53,6 @@ class BaseService<E, C, U> {
         let options = this.listOptions(query, relations, where);
         if (optionsHandle) options = optionsHandle(options);
         // 执行查询
-        console.log(options)
         return this.repository.findAndCount(options);
     }
     /**
@@ -240,7 +239,7 @@ class BaseService<E, C, U> {
         let relations = input.split(';');
         relations = [...new Set(relations)];
         // 直接关系
-        const directRelations = relations.filter((it) => !it.includes('.'));
+        const directRelations = relations.filter((it) => !it.includes('.')).filter(it => it);
         // 间接关系,用.分割
         const indirectRelations = relations.filter((it) => it.includes('.'));
         // 当前实体的实际拥有的关系
@@ -282,7 +281,7 @@ class BaseService<E, C, U> {
                     .flatMap((em) => em.relations);
             }
         });
-        return relations;
+        return relations.filter(it => it);
     }
 }
 export {

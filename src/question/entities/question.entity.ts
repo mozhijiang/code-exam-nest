@@ -12,7 +12,7 @@ class Question {
   book: Book;
   @Column({ default: '' })
   title: string;
-  @Column()
+  @Column({ nullable: true })
   ask: string;
   @Column({ default: 'radio' })
   type: 'ratio' | 'multiSelect';
@@ -30,8 +30,7 @@ class Question {
 
 }
 const questionParam: BaseParam = {
-  primaryKey: 'questionId',
-  baseRelations: ['book','options']
+  primaryKey: 'questionId'
 }
 export {
   questionParam,

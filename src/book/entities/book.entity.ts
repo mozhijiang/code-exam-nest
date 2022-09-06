@@ -18,6 +18,8 @@ class Book {
     tags: Tag[];
     @OneToMany(() => Question, (question) => question.book)
     questions: Question[];
+    @Column({ default: 0 })
+    level: number;
 }
 const bookParam: BaseParam = {
     primaryKey: 'bookId',
