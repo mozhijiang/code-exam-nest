@@ -1,5 +1,5 @@
 import { HttpException, Logger } from "@nestjs/common";
-import { DeepPartial, Equal, FindManyOptions, Like, MoreThan, Repository } from "typeorm";
+import { DeepPartial, Equal, FindManyOptions, FindOneOptions, Like, MoreThan, Repository } from "typeorm";
 import { inspect } from "util";
 interface ListQuery {
     page: number,
@@ -14,7 +14,7 @@ declare class ServiceInteface<E, C, U>{
     save(entity: C | U): Promise<E>;
     list(query: ListQuery, relations?: string[], where?: object | Array<object>, optionsHandle?: (options: FindManyOptions<E>) => FindManyOptions<E>): Promise<[E[], number]>;
     find(optionsHandle?: (options: FindManyOptions<E>) => FindManyOptions<E>): Promise<E[]>;
-    findOne(id: number, relations?: string[]): Promise<E>;
+    findOne(id: number, relations?: string[], optionsHandle?: (options: FindOneOptions<E>) => FindOneOptions<E>): Promise<E>;
     update(id: number, update: U): Promise<E>;
     remove(id: number): Promise<E>;
     all: (relations: string[]) => Promise<E[]>
@@ -75,11 +75,12 @@ class BaseService<E, C, U> {
      * @param id 查询的目标id
      * @param relations 查询的引用关系
      */
-    async findOne(id: number, relations?: string[]): Promise<E> {
+    async findOne(id: number, relations?: string[], optionsHandle?: (options: FindOneOptions<E>) => FindOneOptions<E>): Promise<E> {
         this.logger.log(`${this.constructor.name}.findOne`);
         if (typeof +id != 'number') throw new HttpException('查询参数错误', 500);
-        const options = {};
-        if ((relations || []).length) options['relations'] = this.getRelations(relations.join(';'));
+        let options: FindManyOptions<E> = {};
+        if ((relations || []).length) options.relations = this.getRelations(relations.join(';'));
+        if (optionsHandle) options = optionsHandle(options);
         const found = await this.repository.findOne(id, options);
         if (!found) throw new HttpException('查询失败，没有有效的数据', 500);
         return found;
